@@ -14,6 +14,6 @@ public class PhoneDTO {
     private String phoneName;
     private LocalDateTime createdAt;
     private int price;
-    private String phoneCondition;
+    private String phoneState;
     private int quantity;
 }
