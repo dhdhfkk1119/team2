@@ -280,6 +280,7 @@ $RECYCLE.BIN/
 *.msix
 *.msm
 *.msp
+*.iml
 
 # Windows shortcuts
 *.lnk
