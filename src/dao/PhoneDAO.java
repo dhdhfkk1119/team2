@@ -1,5 +1,7 @@
 package dao;
 
+import dto.PhoneDTO;
+
 import java.sql.SQLException;
 
 /**
@@ -8,7 +10,7 @@ import java.sql.SQLException;
 public class PhoneDAO {
 
     // 새 폰을 데이터 베이스에 추가
-    public void addPhone(Phone phone) throws SQLException{
-        String sql = "INSERT INTO phones (phone_id, phone_name, created_at, price, phone_state
+    public void addPhone(PhoneDTO phone) throws SQLException{
+        String sql = "INSERT INTO phones (phone_id, phone_name, created_at, price, phone_state";
     }
 }
