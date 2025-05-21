@@ -19,15 +19,26 @@ import java.util.List;
 
 public class MemberDAO {
 
+
+    String checkSql = "select * from member where user_id = ?";
+
     public void addMember(MemberDTO memberDTO) throws SQLException {
-        String sql = "insert into member (user_name, user_id, password, member_at) \n" +
-                "values (?, ?, ?, current_date) ";
         try (Connection conn = DataBaseUtil.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, memberDTO.getUserName());
-            pstmt.setString(2, memberDTO.getUserId());
-            pstmt.setString(3, memberDTO.getPassword());
-            pstmt.executeUpdate();
+             PreparedStatement pstmt = conn.prepareStatement(checkSql)) {
+            pstmt.setString(1, memberDTO.getUserId());
+            ResultSet resultSet = pstmt.executeQuery();
+            if(!resultSet.next()){
+                String insertSQL = "insert into member(user_name,user_id,password,member_at) values " +
+                        "(?,?,?,current_date)";
+                PreparedStatement insertpstmt = conn.prepareStatement(insertSQL);
+                insertpstmt.setString(1, memberDTO.getUserName());
+                insertpstmt.setString(2, memberDTO.getUserId());
+                insertpstmt.setString(3, memberDTO.getPassword());
+                insertpstmt.executeUpdate();
+            }else {
+                System.out.println("현재 등록된 아이디가 있습니다");
+            }
+
         }
     }
 
@@ -69,15 +80,5 @@ public class MemberDAO {
             }
         }
         return null;
-    }
-
-    public static void main(String[] args) {
-        MemberDAO memberDAO = new MemberDAO();
-        try {
-            System.out.println(memberDAO.authenticateMember("abcd","asd123"));
-            System.out.println("로그인 성공");
-        } catch (SQLException e) {
-            System.out.println("오류가 발생");
-        }
     }
 }//end of public class

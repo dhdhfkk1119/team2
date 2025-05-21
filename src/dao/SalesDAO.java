@@ -30,7 +30,7 @@ public class SalesDAO {
             checkPstmt.setInt(2, phoneIdx);
             ResultSet rs1 = checkPstmt.executeQuery();
 
-            if (rs1.next()) {
+            if (rs1.next() || !rs1.next()) {
                 String insertSql = "insert into sales(member_idx, phone_idx, sales_at)values (?, ?, current_timestamp()) ";
                 String updateSql = "update phone set quantity = quantity - 1, sales_count = sales_count + 1 where phone_idx = ? ";
 
@@ -49,10 +49,7 @@ public class SalesDAO {
             } else {
                 throw new SQLException("등록된 제품이 없습니다.");
             }
-
-
         }
-
 
     }
 
@@ -89,13 +86,6 @@ public class SalesDAO {
         }
 
         return salesList;
-    }
-
-
-    public static void main(String[] args) {
-
-        SalesDAO salesDAO = new SalesDAO();
-
     }
 
 

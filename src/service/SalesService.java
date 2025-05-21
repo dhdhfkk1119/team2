@@ -33,13 +33,9 @@ public class SalesService {
 
     public static void main(String[] args) {
         SalesService salesService = new SalesService();
+
         try {
-            salesService.getBestSellPhone("14");
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        try {
-            salesService.SalesPhone(1,1);
+            salesService.SalesPhone(1,12);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
