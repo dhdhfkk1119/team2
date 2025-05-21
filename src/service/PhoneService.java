@@ -24,7 +24,6 @@ public class PhoneService {
         phoneDAO.addPhone(phoneDTO);
     }
 
-
     // 중고폰 전체 조회 하는 서비스
     public List<PhoneDTO> getAllPhone() throws SQLException {
         return phoneDAO.getAllPhone();

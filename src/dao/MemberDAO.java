@@ -22,23 +22,25 @@ public class MemberDAO {
     public void addMember(MemberDTO memberDTO) throws SQLException {
         String sql = "insert into member (user_name, user_id, password, member_at) \n" +
                 "values (?, ?, ?, current_date) ";
-        try(Connection conn = DataBaseUtil.getConnection();
-            PreparedStatement pstmt = conn.prepareStatement(sql)){
+        try (Connection conn = DataBaseUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, memberDTO.getUserName());
             pstmt.setString(2, memberDTO.getUserId());
             pstmt.setString(3, memberDTO.getPassword());
             pstmt.executeUpdate();
         }
     }
+
     public List<MemberDTO> allMember() throws SQLException {
         List<MemberDTO> memberDTOS = new ArrayList<>();
         String sql = "select * from member ";
-        try(Connection conn = DataBaseUtil.getConnection();
-        PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (Connection conn = DataBaseUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
             ResultSet rs = pstmt.executeQuery();
 
-            while(rs.next()){
+            while (rs.next()) {
                 MemberDTO memberDTO = new MemberDTO();
+                memberDTO.setMemberIdx(rs.getInt("member_idx"));
                 memberDTO.setUserName(rs.getString("user_name"));
                 memberDTO.setUserId(rs.getString("user_id"));
                 memberDTO.setPassword(rs.getString("password"));
@@ -52,49 +54,19 @@ public class MemberDAO {
     public MemberDTO authenticateMember(String memberId, String password) throws SQLException {
 
         String sql = "select * from member; ";
-            try(Connection conn = DataBaseUtil.getConnection();
-            PreparedStatement pstmt = conn.prepareStatement(sql)) {
-                ResultSet rs = pstmt.executeQuery();
-                if (rs.next()) {
-                    MemberDTO memberDTO = new MemberDTO();
-                    memberDTO.setUserName(rs.getString("user_name"));
-                    memberDTO.setUserId(rs.getString("user_id"));
-                    memberDTO.setPassword(rs.getString("password"));
-                    memberDTO.setMemberAt(rs.getDate("member_at").toLocalDate());
-                    return memberDTO;
-                }
+        try (Connection conn = DataBaseUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                MemberDTO memberDTO = new MemberDTO();
+                memberDTO.setUserName(rs.getString("user_name"));
+                memberDTO.setUserId(rs.getString("user_id"));
+                memberDTO.setPassword(rs.getString("password"));
+                memberDTO.setMemberAt(rs.getDate("member_at").toLocalDate());
+                return memberDTO;
             }
-            return null;
         }
+        return null;
+    }
 
-    public static void main(String[] args) {
-
-        MemberDAO memberDAO = new MemberDAO();
-//        try {memberDAO.AllMember();
-//            for (int i =0;i<memberDAO.allMember().size();i++){
-//                System.out.println(memberDAO.allMember().get(i));
-//            }
-//        } catch (SQLException e) {
-//            throw new RuntimeException(e);
-//        }
-
-//        try{memberDAO.addMember(new MemberDTO(0, "박수민", "park", "sumin1234", LocalDate.now()));
-//            System.out.println(memberDAO.authenticateMember("sumin"));
-//            for (int i = 0; i < memberDAO.allMember().size(); i++){
-//                System.out.println(memberDAO.allMember().get(i));
-//            }
-//         } catch (SQLException e) {
-//            throw new RuntimeException(e);
-//        }
-
-        try{
-            memberDAO.authenticateMember("jihun", "jh1234");
-            for (int i = 0; i < memberDAO.allMember().size(); i++){
-                System.out.println(memberDAO.allMember().get(i));
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-    }//end of main
 }//end of public class

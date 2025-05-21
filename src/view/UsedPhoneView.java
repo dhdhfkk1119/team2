@@ -1,12 +1,20 @@
 package view;
 
+import dto.MemberDTO;
+import service.MemberService;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
+import java.util.List;
 
 public class UsedPhoneView extends JFrame implements ActionListener {
-    private String userId = null;
+    private final MemberService service = new MemberService();
+    private JPanel studentPanel; // 학생 목록을 보여줄 패널
+
+    private Integer userId = null;
     private String password = null;
     JButton loginBtn;
     JButton logoutBtn;
@@ -15,11 +23,17 @@ public class UsedPhoneView extends JFrame implements ActionListener {
     JButton phoneSearch;
     JButton phoneSalse;
     JButton submit;
-    JButton home;
+    JButton homeBtn;
 
     // 로그인 입력 기능
     JTextField useridInput;
     JTextField passwordInput;
+
+    // 회원 가입 입력 기능
+    JTextField userNameInput;
+
+    // 기종 검색 입력 기능
+    JTextField PhoneNameInput;
 
     public UsedPhoneView(){
         initData();
@@ -42,27 +56,34 @@ public class UsedPhoneView extends JFrame implements ActionListener {
         phoneAllView = new JButton("전체 목록 조회");
         phoneSalse = new JButton("중고폰 구매");
         phoneSearch = new JButton("중고폰 서치");
-        home = new JButton("메인으로");
+        homeBtn = new JButton("메인으로");
         useridInput = new JTextField(20);
         passwordInput = new JTextField(20);
+        userNameInput = new JTextField(20);
+        PhoneNameInput = new JTextField(20);
+        studentPanel = new JPanel();
     }
 
 
     private void setInitLayOut(){
-        JLabel label = new JLabel("여기는 중고폰을 등록하고 구매하는 사이트입니다"); // 제일 상단에 띄워줌
+        // 현재 목차 띄워 주기
+
+        JLabel label = new JLabel("\uD83E\uDEA7 여기는 중고폰을 등록하고 구매하는 사이트입니다"); // 제일 상단에 띄워줌
+        label.setFont(new Font("Serif",Font.BOLD,20));
         // 기존 메인 화면
         Container container = getContentPane();
         container.setLayout(new FlowLayout(FlowLayout.RIGHT,20,10));
         container.add(label,BorderLayout.NORTH);
-        container.add(home);
+        container.add(homeBtn);
+
         if(userId == null){
             container.add(loginBtn);
             container.add(registerBtn);
         }else {
-            container.add(phoneAllView);
-            container.add(phoneSearch);
-            container.add(phoneSalse);
-            container.add(logoutBtn);
+            container.add(phoneAllView); // 전체 기종 검색
+            container.add(phoneSearch); // 기종 검색
+            container.add(phoneSalse); // 판매 목록
+            container.add(logoutBtn); // 로그아웃 버튼
         }
         setVisible(true);	//창을 눈에 보이도록 함
         revalidate();
@@ -72,16 +93,21 @@ public class UsedPhoneView extends JFrame implements ActionListener {
     // 로그인 기능
     private void loginView(){
         Container container = getContentPane();
-        container.removeAll(); // 기존 컴포넌트 제거
         container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
 
         // 중앙 정렬을 위해 각 행을 패널로 구성
+        // 메인으로 가는 패널
+        JPanel homePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        homePanel.add(homeBtn);
+
+        // 아이디 패널
         JPanel idPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         JLabel idLabel = new JLabel("아이디 : ");
         useridInput.setPreferredSize(new Dimension(200, 50));
         idPanel.add(idLabel);
         idPanel.add(useridInput);
 
+        // 비밀번호 패널
         JPanel pwPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         JLabel pwLabel = new JLabel("비밀번호 : ");
         passwordInput.setPreferredSize(new Dimension(200, 50));
@@ -98,6 +124,59 @@ public class UsedPhoneView extends JFrame implements ActionListener {
         container.add(spacer);
 
         // 컨테이너에 행별 패널 추가
+        container.add(homePanel);
+        container.add(idPanel);
+        container.add(Box.createVerticalStrut(10)); // 아이디-비밀번호 간격
+        container.add(pwPanel);
+        container.add(Box.createVerticalStrut(15)); // 비밀번호-버튼 간격
+        container.add(btnPanel);
+        revalidate();
+        repaint();
+    }
+
+    // 회원가입 기능
+    private void registerView(){
+        Container container = getContentPane();
+        container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
+
+        // 중앙 정렬을 위해 각 행을 패널로 구성
+        // 메인으로 가는 패널
+        JPanel homePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        homePanel.add(homeBtn);
+
+        // 회원 이름 패널
+        JPanel namePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JLabel nameLabel = new JLabel("회원 이름 : ");
+        userNameInput.setPreferredSize(new Dimension(175, 40));
+        namePanel.add(nameLabel);
+        namePanel.add(userNameInput);
+
+        // 아이디 패널
+        JPanel idPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JLabel idLabel = new JLabel("아이디 : ");
+        useridInput.setPreferredSize(new Dimension(175, 40));
+        idPanel.add(idLabel);
+        idPanel.add(useridInput);
+
+        // 비밀번호 패널
+        JPanel pwPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JLabel pwLabel = new JLabel("비밀번호 : ");
+        passwordInput.setPreferredSize(new Dimension(175, 40));
+        pwPanel.add(pwLabel);
+        pwPanel.add(passwordInput);
+
+        JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        submit.setPreferredSize(new Dimension(175, 40));
+        btnPanel.add(submit);
+
+        // 가운데 여백용 패널 (옵션)
+        JPanel spacer = new JPanel();
+        spacer.setPreferredSize(new Dimension(0, 50));
+        container.add(spacer);
+
+        // 컨테이너에 행별 패널 추가
+        container.add(homePanel);
+        container.add(namePanel);
         container.add(idPanel);
         container.add(Box.createVerticalStrut(10)); // 아이디-비밀번호 간격
         container.add(pwPanel);
@@ -115,7 +194,105 @@ public class UsedPhoneView extends JFrame implements ActionListener {
         revalidate();
         repaint();
     }
-    
+
+    // 전체 휴대폰 검색
+    private void getPhoneAllView() throws SQLException {
+        Container container = getContentPane();
+        JPanel homePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        homePanel.add(homeBtn);
+
+        // 맨위에 목차 띄워주기
+        JPanel historyPanel = new JPanel();
+        JLabel HistoryLabel = new JLabel("\uD83E\uDEA7 현재 등록된 모든 중고폰 목록입니다."); // 제일 상단에 띄워줌
+        HistoryLabel.setFont(new Font("Serif",Font.BOLD,20));
+        historyPanel.add(HistoryLabel);
+
+        // 학생 목록을 담을 패널 (세로 정렬)
+        JPanel studentPanel = new JPanel();
+        studentPanel.setLayout(new BoxLayout(studentPanel, BoxLayout.Y_AXIS));
+
+        // 중앙 정렬을 위한 정렬 설정
+        studentPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        // 리스트 받아오기
+        List<MemberDTO> memberDTOS = service.allMember();
+
+        for (MemberDTO student : memberDTOS) {
+            JLabel label = new JLabel(student.toString());
+            label.setAlignmentX(Component.CENTER_ALIGNMENT); // 각 라벨 중앙 정렬
+            studentPanel.add(label);
+            studentPanel.add(Box.createVerticalStrut(10)); // 라벨 사이 여백
+        }
+
+        // 스크롤 필요하면 JScrollPane으로 감싸기 (옵션)
+        JScrollPane scrollPane = new JScrollPane(studentPanel);
+        scrollPane.setBorder(null);
+
+        // 전체를 가운데에 배치
+
+        container.setLayout(new BorderLayout());
+        container.add(historyPanel,BorderLayout.NORTH);
+        container.add(homePanel,BorderLayout.NORTH);
+        container.add(HistoryLabel,BorderLayout.CENTER);
+        container.add(scrollPane, BorderLayout.CENTER);
+        revalidate();
+        repaint();
+    }
+
+    // 중고폰 검색 기능
+    private void getPhoneSearchView(){
+        Container container = getContentPane();
+        container.setLayout(new BoxLayout(container, BoxLayout.X_AXIS));
+
+        // 중앙 정렬을 위해 각 행을 패널로 구성
+        // 메인으로 가는 패널
+        JPanel homePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        homePanel.add(homeBtn);
+
+        // 아이디 패널
+        JPanel phonePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JLabel phoneLabel = new JLabel("기종명 검색 : ");
+        useridInput.setPreferredSize(new Dimension(200, 50));
+        phonePanel.add(phoneLabel);
+        phonePanel.add(useridInput);
+
+        JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        submit.setPreferredSize(new Dimension(200, 50));
+        btnPanel.add(submit);
+
+        // 가운데 여백용 패널 (옵션)
+        JPanel spacer = new JPanel();
+        spacer.setPreferredSize(new Dimension(0, 50));
+        container.add(spacer);
+
+        // 컨테이너에 행별 패널 추가
+        container.add(homePanel);
+        container.add(phonePanel);
+        container.add(Box.createVerticalStrut(15));
+        container.add(btnPanel);
+        revalidate();
+        repaint();
+    }
+
+    // 로그인 하기
+    private void loginSubmit() throws SQLException {
+        if(useridInput.getText().trim().isEmpty()){
+            System.out.println("값을 입력해주시기 바랍니다");
+        }
+
+        MemberDTO memberDTO = service.authenticateMember(useridInput.getText() , passwordInput.getText());
+        if (memberDTO == null){
+            System.out.println("존재하지 안흔 학번입니다");
+        } else {
+            userId = memberDTO.getMemberIdx();
+            System.out.println("로그인 성공");
+            RePaint();
+            setInitLayOut();
+
+        }
+    }
+
+    // 버튼에 따라 이벤트
     private void addEventListener(){
         logoutBtn.addActionListener(this);
         registerBtn.addActionListener(this);
@@ -124,12 +301,13 @@ public class UsedPhoneView extends JFrame implements ActionListener {
         phoneAllView.addActionListener(this);
         loginBtn.addActionListener(this);
         submit.addActionListener(this);
-        home.addActionListener(this);
+        homeBtn.addActionListener(this);
     }
 
+    // 해당 버튼에 따라 이벤트 발생
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(e.getSource() == home){
+        if(e.getSource() == homeBtn){
             RePaint();
             setInitLayOut();
         }
@@ -140,15 +318,25 @@ public class UsedPhoneView extends JFrame implements ActionListener {
             RePaint();
             logOutView();
         }else if(e.getSource() == submit){
-            if(useridInput.getText().trim().isEmpty() || passwordInput.getText().trim().isEmpty()){
-                System.out.println("값을 입력해주시기 바랍니다");
-            }else {
-                userId = useridInput.getText();
-                password = passwordInput.getText();
-                System.out.println(userId);
-                RePaint();
-                setInitLayOut();
+            try {
+                loginSubmit();
+            } catch (SQLException ex) {
+                System.out.println("예기치 못한 오류 발생 :" + ex.getMessage());
             }
+        }else if(e.getSource() == registerBtn){
+            RePaint();
+            registerView();
+        }else if(e.getSource() == phoneAllView){
+            try {
+                RePaint();
+                getPhoneAllView();
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
+        }else if(e.getSource() == phoneSearch){
+            RePaint();
+            getPhoneSearchView();
+        }else if(e.getSource() == phoneSalse){
 
         }
     }
@@ -159,9 +347,9 @@ public class UsedPhoneView extends JFrame implements ActionListener {
         revalidate();
         repaint();
     }
+
     public static void main(String[] args) {
         new UsedPhoneView();
     }
-
 
 }
