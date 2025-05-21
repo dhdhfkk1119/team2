@@ -43,6 +43,7 @@ public class SalesDAO {
 
                     searchStmt.executeUpdate();
                     updateStmt.executeUpdate();
+                    System.out.println("판매가 완료되었습니다.");
                 }
 
             } else {
@@ -56,7 +57,8 @@ public class SalesDAO {
     }
 
     // 2. 전체 기종에 중에 가장 많이 팔린 기종을 검색
-    public List<PhoneDTO> getBestSellPhone(String searchPhone) {
+    public List<PhoneDTO> getBestSellPhone(String searchPhone) throws SQLException {
+
         List<PhoneDTO> salesList = new ArrayList<>();
         String sql = "select * \n" +
                 "from phone\n" +
@@ -84,9 +86,8 @@ public class SalesDAO {
             for (PhoneDTO phone : salesList) {
                 System.out.println(phone);
             }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
         }
+
         return salesList;
     }
 
