@@ -31,9 +31,6 @@ public class SalesService {
         return salesDAO.getBestSellPhone(searchPhone);
     }
 
-
-
-
     public static void main(String[] args) {
         SalesService salesService = new SalesService();
         try {

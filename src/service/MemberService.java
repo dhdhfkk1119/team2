@@ -20,7 +20,7 @@ public class MemberService {
     }
 
     // 회원 로그인 검사 하기
-    public MemberDTO authenticateMember(String userid , String password) throws SQLException{
+    public MemberDTO authenticateMember(String userid ,String password) throws SQLException{
         return memberDAO.authenticateMember(userid,password);
     }
 

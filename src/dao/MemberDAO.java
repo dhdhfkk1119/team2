@@ -43,7 +43,6 @@ public class MemberDAO {
                 memberDTO.setMemberIdx(rs.getInt("member_idx"));
                 memberDTO.setUserName(rs.getString("user_name"));
                 memberDTO.setUserId(rs.getString("user_id"));
-                memberDTO.setPassword(rs.getString("password"));
                 memberDTO.setMemberAt(rs.getDate("member_at").toLocalDate());
                 memberDTOS.add(memberDTO);
             }
@@ -53,12 +52,15 @@ public class MemberDAO {
 
     public MemberDTO authenticateMember(String memberId, String password) throws SQLException {
 
-        String sql = "select * from member; ";
+        MemberDTO memberDTO = new MemberDTO();
+        String sql = "select * from member where user_id = ? and password = ? ";
         try (Connection conn = DataBaseUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, memberId);
+            pstmt.setString(2, password);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
-                MemberDTO memberDTO = new MemberDTO();
+                memberDTO.setMemberIdx(rs.getInt("member_idx"));
                 memberDTO.setUserName(rs.getString("user_name"));
                 memberDTO.setUserId(rs.getString("user_id"));
                 memberDTO.setPassword(rs.getString("password"));
@@ -69,4 +71,13 @@ public class MemberDAO {
         return null;
     }
 
+    public static void main(String[] args) {
+        MemberDAO memberDAO = new MemberDAO();
+        try {
+            System.out.println(memberDAO.authenticateMember("abcd","asd123"));
+            System.out.println("로그인 성공");
+        } catch (SQLException e) {
+            System.out.println("오류가 발생");
+        }
+    }
 }//end of public class
