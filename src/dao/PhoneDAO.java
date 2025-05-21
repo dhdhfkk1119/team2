@@ -82,43 +82,43 @@ public class PhoneDAO {
 
     }
 
-//    public static void main(String[] args) {
-//        PhoneDAO phoneDAO = new PhoneDAO();
-//        try {
-//            phoneDAO.addPhone(new PhoneDTO(0, "승민", LocalDateTime.now(), 1, "나쁨", 1, 1));
-//        } catch (Exception e) {
-//
-//        }
-//
-//        // 전체 조회
-//        PhoneDAO phoneDAO1 = new PhoneDAO();
-//        try {
-//            ArrayList<PhoneDTO> selectedPhoneList =
-//                    (ArrayList) phoneDAO.searchPhoneName("6");
-//            for (int i = 0; i < selectedPhoneList.size(); i++) {
-//                System.out.println(selectedPhoneList.get(i));
-//            }
-//        } catch (SQLException e) {
-//            throw new RuntimeException(e);
-//        }
-//
-//        // 기종만 조회
-//        PhoneDAO phoneDAO2 = new PhoneDAO();
-//
-//        try {
-//            // 예시: "Galaxy"를 포함하는 기종 조회
-//
-//
-//            // 조회된 기종 이름 출력
-//            for (String name : phoneNames) {
-//                System.out.println(name);
-//            }
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//
-//
-//    }
+    public static void main(String[] args) {
+        PhoneDAO phoneDAO = new PhoneDAO();
+        try {
+            phoneDAO.addPhone(new PhoneDTO(0, "승민", LocalDateTime.now(), 1, "나쁨", 1, 1));
+        } catch (Exception e) {
+
+        }
+
+        // 전체 조회
+        PhoneDAO phoneDAO1 = new PhoneDAO();
+        try {
+            ArrayList<PhoneDTO> selectedPhoneList =
+                    (ArrayList) phoneDAO.searchPhoneName("6");
+            for (int i = 0; i < selectedPhoneList.size(); i++) {
+                System.out.println(selectedPhoneList.get(i));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        // 기종만 조회
+        PhoneDAO phoneDAO2 = new PhoneDAO();
+
+        try {
+            // 예시: "Galaxy"를 포함하는 기종 조회
+
+
+            // 조회된 기종 이름 출력
+            for (String name : phoneNames) {
+                System.out.println(name);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+
+    }
     }
 
 
