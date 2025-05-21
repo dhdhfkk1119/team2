@@ -35,11 +35,13 @@ public class PhoneDAO {
     public List<PhoneDTO> getAllPhone() throws SQLException {
         List<PhoneDTO> phoneDTOList = new ArrayList<>();
         String sql = "SELECT * FROM phone";
+
         try(Connection conn = DataBaseUtil.getConnection();
             Statement stmt = conn.createStatement()) {
             ResultSet rs = stmt.executeQuery(sql);
+
             while(rs.next()){
-                int id = rs.getInt("id");
+                int id = rs.getInt("phone_idx");
                 String phoneName = rs.getString("phone_name");
                 LocalDateTime createdAt = rs.getTimestamp("created_at").toLocalDateTime();
                 int price = rs.getInt("price");
@@ -55,7 +57,7 @@ public class PhoneDAO {
         return phoneDTOList;
     }
 
-    // 기종만 조회
+    // 특정 기종만 조회
     public List<PhoneDTO> searchPhoneName(String searchPhone) throws SQLException {
         List<PhoneDTO> phoneDTOList = new ArrayList<>();
         String sql = "SELECT * FROM phone WHERE phone_name LIKE ?";
@@ -83,9 +85,10 @@ public class PhoneDAO {
     }
 
     public static void main(String[] args) {
+        // 새폰 데이터 베이스에 추가
         PhoneDAO phoneDAO = new PhoneDAO();
         try {
-            phoneDAO.addPhone(new PhoneDTO(0, "승민", LocalDateTime.now(), 1, "나쁨", 1, 1));
+            phoneDAO.addPhone(new PhoneDTO(0, "승민", LocalDateTime.now(), 1, "매우좋음", 1, 1));
         } catch (Exception e) {
 
         }
@@ -93,10 +96,8 @@ public class PhoneDAO {
         // 전체 조회
         PhoneDAO phoneDAO1 = new PhoneDAO();
         try {
-            ArrayList<PhoneDTO> selectedPhoneList =
-                    (ArrayList) phoneDAO.searchPhoneName("6");
-            for (int i = 0; i < selectedPhoneList.size(); i++) {
-                System.out.println(selectedPhoneList.get(i));
+            for (int i = 0; i < phoneDAO1.getAllPhone().size(); i++) {
+                System.out.println(phoneDAO1.getAllPhone().get(i));
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -106,11 +107,12 @@ public class PhoneDAO {
         PhoneDAO phoneDAO2 = new PhoneDAO();
 
         try {
-            // 예시: "Galaxy"를 포함하는 기종 조회
+            List<PhoneDTO> phoneNames = phoneDAO2.searchPhoneName("아이폰");
+
 
 
             // 조회된 기종 이름 출력
-            for (String name : phoneNames) {
+            for (PhoneDTO name : phoneNames) {
                 System.out.println(name);
             }
         } catch (SQLException e) {
