@@ -16,15 +16,16 @@ public class PhoneDAO {
 
     // 새 폰을 데이터 베이스에 추가
     public void addPhone(PhoneDTO phone) {
-        String query = "INSERT INTO phone(phone_name, created_at, price, phone_state, quantity, sales_count) VALUES (?, current_date, ?, ?, ?, 0)";
+        String query = "INSERT INTO phone(phone_name, created_at, price, phone_state, quantity, sales_count, member_idx) VALUES (?, current_date, ?, ?, ?, 0, ?)";
 
         try (Connection conn = DataBaseUtil.getConnection();
-             PreparedStatement psmt = conn.prepareStatement(query)) {
-            psmt.setString(1, phone.getPhoneName());
-            psmt.setInt(2, phone.getPrice());
-            psmt.setString(3, phone.getPhoneState());
-            psmt.setInt(4, phone.getQuantity());
-            psmt.executeUpdate();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            pstmt.setString(1, phone.getPhoneName());
+            pstmt.setInt(2, phone.getPrice());
+            pstmt.setString(3, phone.getPhoneState());
+            pstmt.setInt(4, phone.getQuantity());
+            pstmt.setInt(5, phone.getMemberId());
+            pstmt.executeUpdate();
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -48,8 +49,9 @@ public class PhoneDAO {
                 String phoneState = rs.getString("phone_state");
                 int quantity = rs.getInt("quantity");
                 int salesCount = rs.getInt("sales_count");
+                int memberIdx = rs.getInt("member_idx");
 
-                PhoneDTO phoneDTO = new PhoneDTO(id, phoneName, createdAt, price, phoneState, quantity, salesCount);
+                PhoneDTO phoneDTO = new PhoneDTO(id, phoneName, createdAt, price, phoneState, quantity, salesCount, memberIdx);
                 phoneDTOList.add(phoneDTO);
 
             }
@@ -75,8 +77,9 @@ public class PhoneDAO {
                 String phoneState = rs.getString("phone_state");
                 int quantity = rs.getInt("quantity");
                 int salesCount = rs.getInt("sales_count");
+                int memberIdx = rs.getInt("member_idx");
 
-                PhoneDTO phoneDTO = new PhoneDTO(id, phoneName, createdAt, price, phoneState, quantity, salesCount);
+                PhoneDTO phoneDTO = new PhoneDTO(id, phoneName, createdAt, price, phoneState, quantity, salesCount, memberIdx);
                 phoneDTOList.add(phoneDTO);
             }
         }
@@ -88,7 +91,7 @@ public class PhoneDAO {
         // 새폰 데이터 베이스에 추가
         PhoneDAO phoneDAO = new PhoneDAO();
         try {
-            phoneDAO.addPhone(new PhoneDTO(0, "승민", LocalDateTime.now(), 1, "매우좋음", 1, 1));
+            phoneDAO.addPhone(new PhoneDTO(0, "승민", LocalDateTime.now(), 1, "매우좋음", 1, 1,1));
         } catch (Exception e) {
 
         }
