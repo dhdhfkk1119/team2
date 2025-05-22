@@ -19,29 +19,41 @@ import java.util.List;
 
 public class MemberDAO {
 
+
+    String checkSql = "select * from member where user_id = ?";
+
     public void addMember(MemberDTO memberDTO) throws SQLException {
-        String sql = "insert into member (user_name, user_id, password, member_at) \n" +
-                "values (?, ?, ?, current_date) ";
-        try(Connection conn = DataBaseUtil.getConnection();
-            PreparedStatement pstmt = conn.prepareStatement(sql)){
-            pstmt.setString(1, memberDTO.getUserName());
-            pstmt.setString(2, memberDTO.getUserId());
-            pstmt.setString(3, memberDTO.getPassword());
-            pstmt.executeUpdate();
+        try (Connection conn = DataBaseUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(checkSql)) {
+            pstmt.setString(1, memberDTO.getUserId());
+            ResultSet resultSet = pstmt.executeQuery();
+            if(!resultSet.next()){
+                String insertSQL = "insert into member(user_name,user_id,password,member_at) values " +
+                        "(?,?,?,current_date)";
+                PreparedStatement insertpstmt = conn.prepareStatement(insertSQL);
+                insertpstmt.setString(1, memberDTO.getUserName());
+                insertpstmt.setString(2, memberDTO.getUserId());
+                insertpstmt.setString(3, memberDTO.getPassword());
+                insertpstmt.executeUpdate();
+            }else {
+                System.out.println("현재 등록된 아이디가 있습니다");
+            }
+
         }
     }
+
     public List<MemberDTO> allMember() throws SQLException {
         List<MemberDTO> memberDTOS = new ArrayList<>();
-        String sql = "select * from member ";
-        try(Connection conn = DataBaseUtil.getConnection();
-            PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        String sql = "select member_idx,user_name,user_id,member_at from member ";
+        try (Connection conn = DataBaseUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
             ResultSet rs = pstmt.executeQuery();
 
-            while(rs.next()){
+            while (rs.next()) {
                 MemberDTO memberDTO = new MemberDTO();
+                memberDTO.setMemberIdx(rs.getInt("member_idx"));
                 memberDTO.setUserName(rs.getString("user_name"));
                 memberDTO.setUserId(rs.getString("user_id"));
-                memberDTO.setPassword(rs.getString("password"));
                 memberDTO.setMemberAt(rs.getDate("member_at").toLocalDate());
                 memberDTOS.add(memberDTO);
             }
@@ -51,12 +63,15 @@ public class MemberDAO {
 
     public MemberDTO authenticateMember(String memberId, String password) throws SQLException {
 
-        String sql = "select * from member; ";
-        try(Connection conn = DataBaseUtil.getConnection();
-            PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        MemberDTO memberDTO = new MemberDTO();
+        String sql = "select * from member where user_id = ? and password = ? ";
+        try (Connection conn = DataBaseUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, memberId);
+            pstmt.setString(2, password);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
-                MemberDTO memberDTO = new MemberDTO();
+                memberDTO.setMemberIdx(rs.getInt("member_idx"));
                 memberDTO.setUserName(rs.getString("user_name"));
                 memberDTO.setUserId(rs.getString("user_id"));
                 memberDTO.setPassword(rs.getString("password"));
@@ -67,34 +82,13 @@ public class MemberDAO {
         return null;
     }
 
-    public static void main(String[] args) {
-
-        MemberDAO memberDAO = new MemberDAO();
-//        try {memberDAO.AllMember();
-//            for (int i =0;i<memberDAO.allMember().size();i++){
-//                System.out.println(memberDAO.allMember().get(i));
-//            }
-//        } catch (SQLException e) {
-//            throw new RuntimeException(e);
-//        }
-
-//        try{memberDAO.addMember(new MemberDTO(0, "박수민", "park", "sumin1234", LocalDate.now()));
-//            System.out.println(memberDAO.authenticateMember("sumin"));
-//            for (int i = 0; i < memberDAO.allMember().size(); i++){
-//                System.out.println(memberDAO.allMember().get(i));
-//            }
-//         } catch (SQLException e) {
-//            throw new RuntimeException(e);
-//        }
-
-        try{
-            memberDAO.authenticateMember("jihun", "jh1234");
-            for (int i = 0; i < memberDAO.allMember().size(); i++){
-                System.out.println(memberDAO.allMember().get(i));
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+    public boolean isUserIdExists(String userId) throws SQLException {
+        String sql = "select 1 from member where user_id = ?";
+        try (Connection conn = DataBaseUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, userId);
+            ResultSet resultSet = pstmt.executeQuery();
+            return resultSet.next();
         }
-
-    }//end of main
+    }
 }//end of public class

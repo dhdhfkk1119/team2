@@ -5,10 +5,7 @@ import dto.SalesDTO;
 import lombok.Data;
 import until.DataBaseUtil;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,11 +19,12 @@ public class SalesDAO {
 
 
     String checkSql = "select phone_idx from phone where phone_idx = ? ";
+    String memberIdxSQl = "select * from sales where member_idx = ?";
 
     public void SalesPhone(int memberIdx, int phoneIdx) throws SQLException {
         try (Connection conn = DataBaseUtil.getConnection();
              PreparedStatement checkPstmt = conn.prepareStatement(checkSql);) {
-             checkPstmt.setInt(1, phoneIdx);
+            checkPstmt.setInt(1, phoneIdx);
             ResultSet rs1 = checkPstmt.executeQuery();
 
             if (rs1.next() || !rs1.next()) {
@@ -55,36 +53,123 @@ public class SalesDAO {
     // 2. 전체 기종에 중에 가장 많이 팔린 기종을 검색
     public List<PhoneDTO> getBestSellPhone(String searchPhone) throws SQLException {
 
+        Connection conn = null;
+
         List<PhoneDTO> salesList = new ArrayList<>();
         String sql = "select * \n" +
                 "from phone\n" +
                 "where sales_count > 0 and phone_name like ?\n" +
                 "order by sales_count desc ";
 
+        try {
+            conn = DataBaseUtil.getConnection();
+            conn.setAutoCommit(false);
 
-        try (Connection conn = DataBaseUtil.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, "%" + searchPhone + "%");
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setString(1, "%" + searchPhone + "%");
 
 
-            ResultSet rs = pstmt.executeQuery();
-            while (rs.next()) {
-                PhoneDTO phoneDTO = new PhoneDTO();
-                phoneDTO.setPhoneId(rs.getInt("phone_idx"));
-                phoneDTO.setPhoneName(rs.getString("phone_name"));
-                phoneDTO.setPrice(rs.getInt("price"));
-                phoneDTO.setPhoneState(rs.getString("phone_state"));
-                phoneDTO.setQuantity(rs.getInt("quantity"));
-                phoneDTO.setSalesCount(rs.getInt("sales_count"));
-                salesList.add(phoneDTO);
+                ResultSet rs = pstmt.executeQuery();
+                while (rs.next()) {
+                    PhoneDTO phoneDTO = new PhoneDTO();
+                    phoneDTO.setPhoneId(rs.getInt("phone_idx"));
+                    phoneDTO.setPhoneName(rs.getString("phone_name"));
+                    phoneDTO.setPrice(rs.getInt("price"));
+                    phoneDTO.setPhoneState(rs.getString("phone_state"));
+                    phoneDTO.setQuantity(rs.getInt("quantity"));
+                    phoneDTO.setSalesCount(rs.getInt("sales_count"));
+                    salesList.add(phoneDTO);
+                }
+
+                for (PhoneDTO phone : salesList) {
+                    System.out.println(phone);
+                }
             }
 
-            for (PhoneDTO phone : salesList) {
-                System.out.println(phone);
+
+        } catch (Exception e) {
+            if (conn != null) {
+                try {
+                    conn.rollback();
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.setAutoCommit(true);
+                    conn.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+
             }
         }
-
         return salesList;
+    }
+
+    // 3. 구매 목록 만들기 - 뭐가필요할까
+    //    전체 조회해서 필요한 걸 셀렉해야함.
+    //    폰을 조회해서 sales_count만 조회하면됨.
+    // 다른사람이 산건 필요없음. 내가 산 내목록만 나오면됨.
+    // 다중 조회가 될 수는 있음.
+
+    public List<PhoneDTO> buyPhoneList(int useridx) {
+        Connection conn = null;
+        List<PhoneDTO> phoneList = new ArrayList<>();
+        try {
+            conn = DataBaseUtil.getConnection();
+
+            conn.setAutoCommit(false);
+
+            try (PreparedStatement checkPstmt = conn.prepareStatement(memberIdxSQl)) {
+                checkPstmt.setInt(1, useridx);
+                ResultSet rs1 = checkPstmt.executeQuery();
+                while (rs1.next()) {
+                    Integer id = rs1.getInt("phone_idx");
+                    String searchSQL = "select * from phone where phone_idx = ?";
+                    PreparedStatement pstmt = conn.prepareStatement(searchSQL);
+                    pstmt.setInt(1, id);
+                    ResultSet rs2 = pstmt.executeQuery();
+                    if (rs2.next()) {
+                        int idx = rs2.getInt("phone_idx");
+                        String phoneName = rs2.getString("phone_name");
+                        LocalDateTime createdAt = rs2.getTimestamp("created_at").toLocalDateTime();
+                        int price = rs2.getInt("price");
+                        String phoneState = rs2.getString("phone_state");
+                        int quantity = rs2.getInt("quantity");
+                        int salesCount = rs2.getInt("sales_count");
+                        int memberId = rs2.getInt("member_idx");
+
+                        PhoneDTO phoneDTO = new PhoneDTO(idx, phoneName, createdAt, price, phoneState, quantity, salesCount, memberId);
+                        phoneList.add(phoneDTO);
+                    }
+                }
+
+            }
+
+        } catch (Exception e) {
+            if (conn != null) {
+                try {
+                    conn.rollback();
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.setAutoCommit(true);
+                    conn.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+
+            }
+        }
+        
+        return phoneList;
     }
 
 

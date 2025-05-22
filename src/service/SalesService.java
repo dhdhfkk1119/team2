@@ -31,6 +31,14 @@ public class SalesService {
         return salesDAO.getBestSellPhone(searchPhone);
     }
 
+    // 내가 산 목록 조회하기
+    public List<PhoneDTO> buyPhoneList(int useridx) throws SQLException {
+        if(useridx <= 0 ) {
+            throw new SQLException("잘못된 숫자를 입력하셨습니다.");
+        }
+        return  salesDAO.buyPhoneList(useridx);
+    }
+
     public static void main(String[] args) {
         SalesService salesService = new SalesService();
 

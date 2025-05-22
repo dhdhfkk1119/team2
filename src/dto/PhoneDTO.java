@@ -17,4 +17,5 @@ public class PhoneDTO {
     private String phoneState;
     private int quantity;
     private int salesCount;
+    private int memberId;
 }
