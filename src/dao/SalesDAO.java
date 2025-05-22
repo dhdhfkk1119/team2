@@ -21,13 +21,12 @@ public class SalesDAO {
     // 1.1. 판매하면 수량 감소, 판매량 증가(휴대폰 DB에 반영)
 
 
-    String checkSql = "select sales_idx from sales where member_idx = ? and phone_idx = ? ";
+    String checkSql = "select phone_idx from phone where phone_idx = ? ";
 
     public void SalesPhone(int memberIdx, int phoneIdx) throws SQLException {
         try (Connection conn = DataBaseUtil.getConnection();
              PreparedStatement checkPstmt = conn.prepareStatement(checkSql);) {
-            checkPstmt.setInt(1, memberIdx);
-            checkPstmt.setInt(2, phoneIdx);
+             checkPstmt.setInt(1, phoneIdx);
             ResultSet rs1 = checkPstmt.executeQuery();
 
             if (rs1.next() || !rs1.next()) {

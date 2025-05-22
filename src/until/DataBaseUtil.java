@@ -12,7 +12,7 @@ import java.sql.SQLException;
 public class DataBaseUtil {
     private static final String DB_URL = "jdbc:mysql://localhost:3306/usedphone?serverTimezone=Asia/Seoul";
     private static final String DB_USER = "root";
-    private static final String DB_PWD = "1234";
+    private static final String DB_PWD = "asd1234";
 
     // 데이터벵스 연결 객체를 변환 하는 함수
     public static Connection getConnection() throws SQLException {
