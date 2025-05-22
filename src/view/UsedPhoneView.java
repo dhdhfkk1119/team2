@@ -96,7 +96,7 @@ public class UsedPhoneView extends JFrame implements ActionListener {
 
         // 중고 폰 검색
         phoneAllViewBtn = new JButton("전체 목록 조회");
-        phoneSearchViewBtn = new JButton("중고폰 서치");
+        phoneSearchViewBtn = new JButton("중고폰 검색");
         phoneNameSubmitBtn = new JButton("검색하기");
 
         // 제일 많이 팔린 중고폰 검색
@@ -296,19 +296,25 @@ public class UsedPhoneView extends JFrame implements ActionListener {
     }
 
     // 로그인 하기 버튼
-    private void loginSubmit() throws SQLException {
+    private void loginSubmit() {
         if (useridInput.getText().trim().isEmpty() || passwordInput.getText().trim().isEmpty()) {
             System.out.println("아이디 또는 비밀번호를 입력해주시기 바랍니다");
         } else {
-            MemberDTO memberDTO = memberService.authenticateMember(useridInput.getText(), passwordInput.getText());
-            if (memberDTO != null) {
-                userId = memberDTO.getMemberIdx();
-                System.out.println("로그인 성공");
-                RePaint();
-                setInitLayOut();
-            } else {
-                System.out.println("아이디 또는 비밀번호가 틀립니다");
+            MemberDTO memberDTO = null;
+            try {
+                memberDTO = memberService.authenticateMember(useridInput.getText(), passwordInput.getText());
+                if (memberDTO != null) {
+                    userId = memberDTO.getMemberIdx();
+                    System.out.println("로그인 성공");
+                    RePaint();
+                    setInitLayOut();
+                } else {
+                    System.out.println("아이디 또는 비밀번호가 틀립니다");
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
             }
+
         }
     }
 
@@ -405,7 +411,12 @@ public class UsedPhoneView extends JFrame implements ActionListener {
             phoneDTO.setPrice(Integer.parseInt(priceInput.getText()));
             phoneDTO.setPhoneState(phoneStateInput.getText());
             phoneDTO.setQuantity(Integer.parseInt(quantityInput.getText()));
+            phoneDTO.setMemberId(userId);
             phoneService.addPhone(phoneDTO);
+            System.out.println("정상적으로 등록되었습니다 :" + phoneDTO.getPhoneId());
+            RePaint();
+            setInitLayOut();
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -459,7 +470,7 @@ public class UsedPhoneView extends JFrame implements ActionListener {
     }
 
     // 전체 휴대폰 검색 --- O
-    private void getPhoneAllView() throws SQLException {
+    private void getPhoneAllView() {
         Container container = getContentPane();
         JPanel homePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         homePanel.add(homeBtn);
@@ -478,13 +489,18 @@ public class UsedPhoneView extends JFrame implements ActionListener {
         studentPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         // 리스트 받아오기
-        List<MemberDTO> memberDTOS = memberService.allMember();
+        List<MemberDTO> memberDTOS = null;
+        try {
+            memberDTOS = memberService.allMember();
+            for (MemberDTO student : memberDTOS) {
+                JLabel label = new JLabel(student.toString());
+                label.setAlignmentX(Component.CENTER_ALIGNMENT); // 각 라벨 중앙 정렬
+                studentPanel.add(label);
+                studentPanel.add(Box.createVerticalStrut(10)); // 라벨 사이 여백
+            }
 
-        for (MemberDTO student : memberDTOS) {
-            JLabel label = new JLabel(student.toString());
-            label.setAlignmentX(Component.CENTER_ALIGNMENT); // 각 라벨 중앙 정렬
-            studentPanel.add(label);
-            studentPanel.add(Box.createVerticalStrut(10)); // 라벨 사이 여백
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
 
         JPanel spacer = new JPanel();
@@ -536,7 +552,7 @@ public class UsedPhoneView extends JFrame implements ActionListener {
     }
 
     // 기종명 검색하기 버튼
-    private void searchPhoneSubmit() throws SQLException {
+    private void searchPhoneSubmit() {
         if (phoneNameInput.getText() == null || phoneNameInput.getText().trim().isEmpty()) {
             System.out.println("값을 입력해주시기 바랍니다");
         }
@@ -554,13 +570,17 @@ public class UsedPhoneView extends JFrame implements ActionListener {
         studentPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         // 리스트 받아오기
-        List<PhoneDTO> phoneDTO = phoneService.searchPhoneByName(phoneNameInput.getText());
-
-        for (PhoneDTO phoneDTOList : phoneDTO) {
-            JLabel label = new JLabel(phoneDTOList.toString());
-            label.setAlignmentX(Component.CENTER_ALIGNMENT); // 각 라벨 중앙 정렬
-            studentPanel.add(label);
-            studentPanel.add(Box.createVerticalStrut(10)); // 라벨 사이 여백
+        List<PhoneDTO> phoneDTO = null;
+        try {
+            phoneDTO = phoneService.searchPhoneByName(phoneNameInput.getText());
+            for (PhoneDTO phoneDTOList : phoneDTO) {
+                JLabel label = new JLabel(phoneDTOList.toString());
+                label.setAlignmentX(Component.CENTER_ALIGNMENT); // 각 라벨 중앙 정렬
+                studentPanel.add(label);
+                studentPanel.add(Box.createVerticalStrut(10)); // 라벨 사이 여백
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
 
         // 스크롤 필요하면 JScrollPane으로 감싸기 (옵션)
@@ -658,7 +678,7 @@ public class UsedPhoneView extends JFrame implements ActionListener {
     }
 
     // 휴대폰 구매하기 기종 번호 VIEW
-    private void buyPhoneView() throws SQLException {
+    private void buyPhoneView() {
         Container container = getContentPane();
         container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
 
@@ -769,42 +789,24 @@ public class UsedPhoneView extends JFrame implements ActionListener {
             RePaint();
             logOutView();
         } else if (e.getSource() == loginSubmitBtn) {
-            try {
-                loginSubmit();
-            } catch (SQLException ex) {
-                System.out.println("예기치 못한 오류 발생 :" + ex.getMessage());
-            }
+            loginSubmit();
         } else if (e.getSource() == registerViewBtn) {
             RePaint();
             registerView();
         } else if (e.getSource() == phoneAllViewBtn) {
-            try {
-                RePaint();
-                getPhoneAllView();
-            } catch (SQLException ex) {
-                throw new RuntimeException(ex);
-            }
+            RePaint();
+            getPhoneAllView();
         } else if (e.getSource() == phoneSearchViewBtn) {
             RePaint();
             getPhoneSearchView();
         } else if (e.getSource() == phoneSalseViewBtn) {
             RePaint();
-            try {
-                buyPhoneView();
-            } catch (SQLException ex) {
-                throw new RuntimeException(ex);
-            }
+            buyPhoneView();
         } else if (e.getSource() == phoneNameSubmitBtn) {
-            try {
-                searchPhoneSubmit();
-            } catch (SQLException ex) {
-                throw new RuntimeException(ex);
-            }
+            searchPhoneSubmit();
         } else if (e.getSource() == buyPhoneSubmitBtn) {
-            System.out.println("구매하기 버튼 클릭");
             buyPhoneSubmit();
         } else if (e.getSource() == registerSubmitBtn) {
-            RePaint();
             registerSubmit();
         } else if (e.getSource() == phoneBestSalesViewBtn) {
             RePaint();
