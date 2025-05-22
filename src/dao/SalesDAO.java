@@ -78,6 +78,8 @@ public class SalesDAO {
                     phoneDTO.setPhoneState(rs.getString("phone_state"));
                     phoneDTO.setQuantity(rs.getInt("quantity"));
                     phoneDTO.setSalesCount(rs.getInt("sales_count"));
+                    phoneDTO.setMemberId(rs.getInt("member_idx"));
+                    phoneDTO.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
                     salesList.add(phoneDTO);
                 }
 

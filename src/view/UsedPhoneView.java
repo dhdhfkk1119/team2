@@ -11,6 +11,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class UsedPhoneView extends JFrame implements ActionListener {
@@ -205,6 +206,15 @@ public class UsedPhoneView extends JFrame implements ActionListener {
         Container container = getContentPane();
         container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
 
+        // 현재 위치를 보여주는 패널
+        JLabel titleLabel = new JLabel("\uD83E\uDEA7 현재 페이지는 로그인 하는 페이지 입니다 \uD83E\uDEA7", SwingConstants.CENTER);
+        titleLabel.setFont(new Font("Serif", Font.BOLD, 20));
+        titleLabel.setBorder(BorderFactory.createEmptyBorder(20, 0, 10, 0));
+
+        // 중앙 정렬을 위해 JLabel을 감쌀 JPanel 생성
+        JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        titlePanel.add(titleLabel);
+
         // 중앙 정렬을 위해 각 행을 패널로 구성
         // 메인으로 가는 패널
         JPanel homePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -233,7 +243,9 @@ public class UsedPhoneView extends JFrame implements ActionListener {
         spacer.setPreferredSize(new Dimension(0, 50));
         container.add(spacer);
 
-        // 컨테이너에 행별 패널 추가
+        // 컨테이너에 행별 패널 추가\
+        container.add(titlePanel); // 제목을 가장 위에 추가
+        container.add(spacer);     // 여백
         container.add(homePanel);
         container.add(idPanel);
         container.add(Box.createVerticalStrut(10)); // 아이디-비밀번호 간격
@@ -248,6 +260,15 @@ public class UsedPhoneView extends JFrame implements ActionListener {
     private void registerView() {
         Container container = getContentPane();
         container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
+
+        // 현재 위치를 보여주는 패널
+        JLabel titleLabel = new JLabel("\uD83E\uDEA7 현재 페이지는 회원 가입 하는 페이지 입니다 \uD83E\uDEA7", SwingConstants.CENTER);
+        titleLabel.setFont(new Font("Serif", Font.BOLD, 20));
+        titleLabel.setBorder(BorderFactory.createEmptyBorder(20, 0, 10, 0));
+
+        // 중앙 정렬을 위해 JLabel을 감쌀 JPanel 생성
+        JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        titlePanel.add(titleLabel);
 
         // 중앙 정렬을 위해 각 행을 패널로 구성
         // 메인으로 가는 패널
@@ -286,9 +307,11 @@ public class UsedPhoneView extends JFrame implements ActionListener {
         registerSubmitBtn.setPreferredSize(new Dimension(175, 40));
         btnPanel.add(registerSubmitBtn);
 
+        container.add(titlePanel);
+
         // 가운데 여백용 패널 (옵션)
         JPanel spacer = new JPanel();
-        spacer.setPreferredSize(new Dimension(0, 50));
+        spacer.setPreferredSize(new Dimension(0, 100));
         container.add(spacer);
 
         // 컨테이너에 행별 패널 추가
@@ -402,6 +425,15 @@ public class UsedPhoneView extends JFrame implements ActionListener {
         Container container = getContentPane();
         container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
 
+        // 현재 위치를 보여주는 패널
+        JLabel titleLabel = new JLabel("\uD83E\uDEA7 현재 페이지는 중고폰을 등록해서 판매하는 페이지 입니다 \uD83E\uDEA7", SwingConstants.CENTER);
+        titleLabel.setFont(new Font("Serif", Font.BOLD, 20));
+        titleLabel.setBorder(BorderFactory.createEmptyBorder(20, 0, 10, 0));
+
+        // 중앙 정렬을 위해 JLabel을 감쌀 JPanel 생성
+        JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        titlePanel.add(titleLabel);
+
         // 중앙 정렬을 위해 각 행을 패널로 구성
         // 메인으로 가는 패널
         JPanel homePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -438,6 +470,9 @@ public class UsedPhoneView extends JFrame implements ActionListener {
         JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         phoneAddSubmitBtn.setPreferredSize(new Dimension(175, 40));
         btnPanel.add(phoneAddSubmitBtn);
+
+
+        container.add(titlePanel);
 
         // 가운데 여백용 패널 (옵션)
         JPanel spacer = new JPanel();
@@ -500,9 +535,10 @@ public class UsedPhoneView extends JFrame implements ActionListener {
         container.setLayout(new BorderLayout());
 
         // 1. 상단 제목 라벨
-        JLabel titleLabel = new JLabel("\uD83E\uDEA7 현재 구매한 휴대폰 목록입니다 \uD83E\uDEA7", SwingConstants.CENTER);
+        JLabel titleLabel = new JLabel("\uD83E\uDEA7 현재 페이지는 자신이 구매한 휴대폰 목록 페이지 입니다 \uD83E\uDEA7", SwingConstants.CENTER);
         titleLabel.setFont(new Font("Serif", Font.BOLD, 20));
         titleLabel.setBorder(BorderFactory.createEmptyBorder(20, 0, 10, 0)); // 여백
+        titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT); // ⬅️ 이 줄 추가!
 
         // 2. Home 버튼 패널
         JPanel homePanel = new JPanel();
@@ -526,11 +562,22 @@ public class UsedPhoneView extends JFrame implements ActionListener {
             List<PhoneDTO> phoneDTOS = salesService.buyPhoneList(userId);
             if (phoneDTOS != null && !phoneDTOS.isEmpty()) {
                 for (PhoneDTO phoneDTO : phoneDTOS) {
+
+                    // 필요한 필드만 표시
+                    String labelText = String.format(
+                            "휴대폰 번호: %d | 휴대폰 이름: %s | 가격: %d | 등록일: %s | 등록자 번호: %d",
+                            phoneDTO.getPhoneId(),
+                            phoneDTO.getPhoneName(),
+                            phoneDTO.getPrice(),
+                            phoneDTO.getCreatedAt(),
+                            phoneDTO.getMemberId()
+                    );
+
                     JPanel phoneItemPanel = new JPanel();
                     phoneItemPanel.setBackground(new Color(240, 240, 240)); // 연회색 배경
                     phoneItemPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
                     phoneItemPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40)); // 고정 높이
-                    JLabel phoneLabel = new JLabel(phoneDTO.toString());
+                    JLabel phoneLabel = new JLabel(labelText);
                     phoneItemPanel.add(phoneLabel);
 
                     listPanel.add(phoneItemPanel);
@@ -562,10 +609,14 @@ public class UsedPhoneView extends JFrame implements ActionListener {
         container.removeAll(); // 기존 내용 제거
         container.setLayout(new BorderLayout());
 
-        // 1. 상단 제목 라벨
-        JLabel titleLabel = new JLabel("\uD83E\uDEA7 현재는 등록된 중고폰의 목록입니다 \uD83E\uDEA7", SwingConstants.CENTER);
+        // 현재 위치를 보여주는 패널
+        JLabel titleLabel = new JLabel("\uD83E\uDEA7 현재 전체 중고폰 기종을 보여주는 페이지 입니다 \uD83E\uDEA7", SwingConstants.CENTER);
         titleLabel.setFont(new Font("Serif", Font.BOLD, 20));
-        titleLabel.setBorder(BorderFactory.createEmptyBorder(20, 0, 10, 0)); // 여백
+        titleLabel.setBorder(BorderFactory.createEmptyBorder(20, 0, 10, 0));
+
+        // 중앙 정렬을 위해 JLabel을 감쌀 JPanel 생성
+        JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        titlePanel.add(titleLabel);
 
         // 2. Home 버튼 패널
         JPanel homePanel = new JPanel();
@@ -576,7 +627,7 @@ public class UsedPhoneView extends JFrame implements ActionListener {
         JPanel topPanel = new JPanel();
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
         topPanel.setOpaque(false);
-        topPanel.add(titleLabel);
+        topPanel.add(titlePanel);
         topPanel.add(homePanel);
         container.add(topPanel, BorderLayout.NORTH);
 
@@ -589,11 +640,22 @@ public class UsedPhoneView extends JFrame implements ActionListener {
             List<PhoneDTO> phoneDTOS = phoneService.getAllPhone();
             if (phoneDTOS != null && !phoneDTOS.isEmpty()) {
                 for (PhoneDTO phoneDTO : phoneDTOS) {
+
+                    // 필요한 필드만 표시
+                    String labelText = String.format(
+                            "휴대폰 번호: %d | 휴대폰 이름: %s | 가격: %d | 등록일: %s | 등록자 번호: %d",
+                            phoneDTO.getPhoneId(),
+                            phoneDTO.getPhoneName(),
+                            phoneDTO.getPrice(),
+                            phoneDTO.getCreatedAt(),
+                            phoneDTO.getMemberId()
+                    );
+
                     JPanel phoneItemPanel = new JPanel();
                     phoneItemPanel.setBackground(new Color(240, 240, 240)); // 연회색 배경
                     phoneItemPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
                     phoneItemPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40)); // 고정 높이
-                    JLabel phoneLabel = new JLabel(phoneDTO.toString());
+                    JLabel phoneLabel = new JLabel(labelText);
                     phoneItemPanel.add(phoneLabel);
 
                     listPanel.add(phoneItemPanel);
@@ -625,15 +687,25 @@ public class UsedPhoneView extends JFrame implements ActionListener {
         container.removeAll();
         container.setLayout(new BorderLayout());
 
-        // 상단 제목
-        JLabel titleLabel = new JLabel("\uD83D\uDD0D 기종명을 검색하는 화면입니다 \uD83D\uDD0D", SwingConstants.CENTER);
+        // 현재 위치를 나타내는 패널
+        JLabel titleLabel = new JLabel("\uD83E\uDEA7 현재 페이지는 중고폰을 검색하는 페이지 입니다 \uD83E\uDEA7", SwingConstants.CENTER);
         titleLabel.setFont(new Font("Serif", Font.BOLD, 20));
         titleLabel.setBorder(BorderFactory.createEmptyBorder(20, 0, 10, 0));
 
-        // 2. Home 버튼 패널
-        JPanel homePanel = new JPanel();
-        homePanel.setLayout(new FlowLayout(FlowLayout.CENTER));
+        JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        titlePanel.add(titleLabel);
+
+        // 홈 패널
+        JPanel homePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         homePanel.add(homeBtn);
+
+        // 현재 위치 + 홈 패널
+        JPanel topPanel = new JPanel();
+        topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
+        topPanel.add(titlePanel);
+        topPanel.add(homePanel);
+
+        container.add(topPanel, BorderLayout.NORTH);
 
         // 검색 입력 + 버튼 패널 (한 줄)
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
@@ -657,8 +729,6 @@ public class UsedPhoneView extends JFrame implements ActionListener {
         phoneNameSubmitBtn.addActionListener(e -> searchPhoneSubmit(resultPanel));
 
         // 화면에 구성
-        container.add(titleLabel, BorderLayout.NORTH);
-        container.add(homePanel,BorderLayout.NORTH);
         container.add(searchPanel, BorderLayout.CENTER);
         container.add(scrollPane, BorderLayout.SOUTH);
 
@@ -670,7 +740,6 @@ public class UsedPhoneView extends JFrame implements ActionListener {
     // 기종명 검색하기 버튼
     private void searchPhoneSubmit(JPanel resultPanel) {
         resultPanel.removeAll(); // 기존 결과 제거
-
 
         String input = phoneNameInput.getText();
         if (input == null || input.trim().isEmpty()) {
@@ -691,11 +760,22 @@ public class UsedPhoneView extends JFrame implements ActionListener {
                 resultPanel.add(emptyLabel);
             } else {
                 for (PhoneDTO phoneDTO : phoneDTOList) {
+
+                    // 필요한 필드만 표시
+                    String labelText = String.format(
+                            "휴대폰 번호: %d | 휴대폰 이름: %s | 가격: %d | 등록일: %s | 등록자 번호: %d",
+                            phoneDTO.getPhoneId(),
+                            phoneDTO.getPhoneName(),
+                            phoneDTO.getPrice(),
+                            phoneDTO.getCreatedAt(),
+                            phoneDTO.getMemberId()
+                    );
+
                     JPanel itemPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
                     itemPanel.setBackground(new Color(240, 240, 240)); // 백그라운드 색 변경
                     itemPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY)); // 테두리 추가
                     itemPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
-                    JLabel itemLabel = new JLabel(phoneDTO.toString());
+                    JLabel itemLabel = new JLabel(labelText);
                     itemPanel.add(itemLabel);
                     resultPanel.add(itemPanel);
                     resultPanel.add(Box.createVerticalStrut(5));
@@ -714,82 +794,114 @@ public class UsedPhoneView extends JFrame implements ActionListener {
     // 가장 많이 팔린 중고폰 검색  VIEW
     private void getBestSellPhoneView() {
         Container container = getContentPane();
-        container.setLayout(new BoxLayout(container, BoxLayout.X_AXIS));
+        container.removeAll();
+        container.setLayout(new BorderLayout());
 
-        // 중앙 정렬을 위해 각 행을 패널로 구성
-        // 메인으로 가는 패널
+        // 현재 위치를 나타내는 패널
+        JLabel titleLabel = new JLabel("\uD83E\uDEA7 현재 페이지는 가장 많이 팔린 기종명을 검색하는 페이지 입니다 \uD83E\uDEA7", SwingConstants.CENTER);
+        titleLabel.setFont(new Font("Serif", Font.BOLD, 20));
+        titleLabel.setBorder(BorderFactory.createEmptyBorder(20, 0, 10, 0));
+
+        JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        titlePanel.add(titleLabel);
+
+        // 홈 패널
         JPanel homePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         homePanel.add(homeBtn);
 
-        // 기종명 검색 기능
-        JPanel phonePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        JLabel phoneLabel = new JLabel("가장 많이 팔린 기종 검색 : ");
-        phoneBestSalesInput.setPreferredSize(new Dimension(175, 40));
-        phonePanel.add(phoneLabel);
-        phonePanel.add(phoneBestSalesInput);
+        // 현재 위치 + 홈 패널
+        JPanel topPanel = new JPanel();
+        topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
+        topPanel.add(titlePanel);
+        topPanel.add(homePanel);
 
-        JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        phoneBestSalesSubmitBtn.setPreferredSize(new Dimension(200, 50));
-        btnPanel.add(phoneBestSalesSubmitBtn);
+        container.add(topPanel, BorderLayout.NORTH);
 
-        // 가운데 여백용 패널 (옵션)
-        JPanel spacer = new JPanel();
-        spacer.setPreferredSize(new Dimension(0, 50));
-        container.add(spacer);
+        // 검색 입력 및 버튼 패널 한줄
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
+        JLabel phoneLabel = new JLabel("검색 하고 싶은 기종명 : ");
+        phoneBestSalesInput.setPreferredSize(new Dimension(200, 30));
+        phoneBestSalesSubmitBtn.setPreferredSize(new Dimension(100, 30));
+        searchPanel.add(phoneLabel);
+        searchPanel.add(phoneBestSalesInput);
+        searchPanel.add(phoneBestSalesSubmitBtn);
 
-        // 컨테이너에 행별 패널 추가
-        container.add(homePanel);
-        container.add(phonePanel);
-        container.add(Box.createVerticalStrut(15));
-        container.add(btnPanel);
+        container.add(searchPanel, BorderLayout.CENTER);
+
+        // 결과 표시 데이터 많을 경우 스크롤 가능
+        JPanel resultPanel = new JPanel();
+        resultPanel.setLayout(new BoxLayout(resultPanel, BoxLayout.Y_AXIS));
+        resultPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+        resultPanel.setPreferredSize(new Dimension(800, 400)); // 결과 영역 사이즈
+
+        JScrollPane scrollPane = new JScrollPane(resultPanel);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+
+        container.add(scrollPane, BorderLayout.SOUTH);
+
+        // 버튼 클릭시 submit 이벤트 작동
+        phoneBestSalesSubmitBtn.addActionListener(e -> getBestPhoneSubmit(resultPanel));
+
+        // 화면 갱신
+        setVisible(true);
         revalidate();
         repaint();
     }
-
+    
     // 가장 많이 팔린 중고폰 검색 버튼 submit
-    private void getBestPhoneSubmit() {
-        if (phoneBestSalesInput.getText() == null || phoneBestSalesInput.getText().trim().isEmpty()) {
-            System.out.println("정확한 기종명 입력 또는 공백을 입력하지 마세요!!");
+    private void getBestPhoneSubmit(JPanel resultPanel) {
+        resultPanel.removeAll(); // 기존 결과 제거
+
+        String input = phoneBestSalesInput.getText();
+        if (input == null || input.trim().isEmpty()) {
+            JLabel warningLabel = new JLabel("값을 입력해주세요");
+            warningLabel.setForeground(Color.RED);
+            warningLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+            resultPanel.add(warningLabel);
+            resultPanel.revalidate();
+            resultPanel.repaint();
+            return;
         }
+
         try {
-            Container container = getContentPane();
-            JPanel homePanel = new JPanel();
-            homePanel.setLayout(new BoxLayout(homePanel, BoxLayout.Y_AXIS));
-            container.add(homePanel, BorderLayout.NORTH);
+            List<PhoneDTO> phoneDTOList = salesService.getBestSellPhone(input);
+            if (phoneDTOList.isEmpty()) {
+                JLabel emptyLabel = new JLabel("검색 결과가 없습니다.");
+                emptyLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+                resultPanel.add(emptyLabel);
+            } else {
+                for (PhoneDTO phoneDTO : phoneDTOList) {
+                    JPanel itemPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+                    itemPanel.setBackground(new Color(240, 240, 240)); // 백그라운드 색 변경
+                    itemPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY)); // 테두리 추가
+                    itemPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
 
-            // 학생 목록을 담을 패널 (세로 정렬)
-            JPanel studentPanel = new JPanel();
-            studentPanel.setLayout(new BoxLayout(studentPanel, BoxLayout.Y_AXIS));
 
-            // 중앙 정렬을 위한 정렬 설정
-            studentPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-            // 리스트 받아오기
-            List<PhoneDTO> phoneDTO = salesService.getBestSellPhone(phoneBestSalesInput.getText());
+                    // 필요한 필드만 표시
+                    String labelText = String.format(
+                            "휴대폰 번호: %d | 휴대폰 이름: %s | 가격: %d | 등록일: %s | 등록자 번호: %d",
+                            phoneDTO.getPhoneId(),
+                            phoneDTO.getPhoneName(),
+                            phoneDTO.getPrice(),
+                            phoneDTO.getCreatedAt(),
+                            phoneDTO.getMemberId()
+                    );
 
-            for (PhoneDTO phoneDTOList : phoneDTO) {
-                JLabel label = new JLabel(phoneDTOList.toString());
-                label.setAlignmentX(Component.CENTER_ALIGNMENT); // 각 라벨 중앙 정렬
-                studentPanel.add(label);
-                studentPanel.add(Box.createVerticalStrut(10)); // 라벨 사이 여백
+                    JLabel itemLabel = new JLabel(labelText);
+                    itemPanel.add(itemLabel);
+                    resultPanel.add(itemPanel);
+                    resultPanel.add(Box.createVerticalStrut(5));
+                }
             }
-
-            // 스크롤 필요하면 JScrollPane으로 감싸기 (옵션)
-            JScrollPane scrollPane = new JScrollPane(studentPanel);
-            scrollPane.setBorder(null);
-
-            // 전체를 가운데에 배치
-            container.setLayout(new BorderLayout());
-            container.add(homePanel, BorderLayout.NORTH);
-            container.add(scrollPane, BorderLayout.CENTER);
-
-
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            JLabel errorLabel = new JLabel("데이터 불러오기 오류: " + e.getMessage());
+            errorLabel.setForeground(Color.RED);
+            resultPanel.add(errorLabel);
         }
 
-        revalidate();
-        repaint();
+        resultPanel.revalidate();
+        resultPanel.repaint();
     }
 
     // 휴대폰 구매하기 기종 번호 VIEW
@@ -797,10 +909,25 @@ public class UsedPhoneView extends JFrame implements ActionListener {
         Container container = getContentPane();
         container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
 
-        // 중앙 정렬을 위해 각 행을 패널로 구성
-        // 메인으로 가는 패널
+        // 현재 위치를 나타내는 패널
+        JLabel titleLabel = new JLabel("\uD83E\uDEA7 현재 페이지는 중고폰을 구매하는 페이지 입니다 \uD83E\uDEA7", SwingConstants.CENTER);
+        titleLabel.setFont(new Font("Serif", Font.BOLD, 20));
+        titleLabel.setBorder(BorderFactory.createEmptyBorder(20, 0, 10, 0));
+
+        JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        titlePanel.add(titleLabel);
+
+        // 홈 패널
         JPanel homePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         homePanel.add(homeBtn);
+
+        // 현재 위치 + 홈 패널
+        JPanel topPanel = new JPanel();
+        topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.Y_AXIS));
+        topPanel.add(titlePanel);
+        topPanel.add(homePanel);
+
+        container.add(topPanel, BorderLayout.NORTH);
 
         // 구매하기 휴대폰 번호
         JPanel buyPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -925,9 +1052,7 @@ public class UsedPhoneView extends JFrame implements ActionListener {
         } else if (e.getSource() == phoneBestSalesViewBtn) {
             RePaint();
             getBestSellPhoneView();
-        } else if (e.getSource() == phoneBestSalesSubmitBtn) {
-            getBestPhoneSubmit();
-        } else if (e.getSource() == phoneAddViewBtn) {
+        }  else if (e.getSource() == phoneAddViewBtn) {
             RePaint();
             phoneAddView();
         } else if (e.getSource() == phoneAddSubmitBtn) {

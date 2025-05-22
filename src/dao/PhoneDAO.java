@@ -37,11 +37,11 @@ public class PhoneDAO {
         List<PhoneDTO> phoneDTOList = new ArrayList<>();
         String sql = "SELECT * FROM phone";
 
-        try(Connection conn = DataBaseUtil.getConnection();
-            Statement stmt = conn.createStatement()) {
+        try (Connection conn = DataBaseUtil.getConnection();
+             Statement stmt = conn.createStatement()) {
             ResultSet rs = stmt.executeQuery(sql);
 
-            while(rs.next()){
+            while (rs.next()) {
                 int id = rs.getInt("phone_idx");
                 String phoneName = rs.getString("phone_name");
                 LocalDateTime createdAt = rs.getTimestamp("created_at").toLocalDateTime();
@@ -91,40 +91,14 @@ public class PhoneDAO {
         // 새폰 데이터 베이스에 추가
         PhoneDAO phoneDAO = new PhoneDAO();
         try {
-            phoneDAO.addPhone(new PhoneDTO(0, "승민", LocalDateTime.now(), 1, "매우좋음", 1, 1,1));
-        } catch (Exception e) {
-
-        }
-
-        // 전체 조회
-        PhoneDAO phoneDAO1 = new PhoneDAO();
-        try {
-            for (int i = 0; i < phoneDAO1.getAllPhone().size(); i++) {
-                System.out.println(phoneDAO1.getAllPhone().get(i));
-            }
+            System.out.println(phoneDAO.getAllPhone().get(1));;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
 
-        // 기종만 조회
-        PhoneDAO phoneDAO2 = new PhoneDAO();
-
-        try {
-            List<PhoneDTO> phoneNames = phoneDAO2.searchPhoneName("아이폰");
-
-
-
-            // 조회된 기종 이름 출력
-            for (PhoneDTO name : phoneNames) {
-                System.out.println(name);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
 
     }
-    }
+}
 
 
 
