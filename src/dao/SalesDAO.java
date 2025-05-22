@@ -24,8 +24,8 @@ public class SalesDAO {
     public void SalesPhone(int memberIdx, int phoneIdx) throws SQLException {
         try (Connection conn = DataBaseUtil.getConnection();
              PreparedStatement checkPstmt = conn.prepareStatement(checkSql);) {
-             checkPstmt.setInt(1, phoneIdx);
-             ResultSet rs1 = checkPstmt.executeQuery();
+            checkPstmt.setInt(1, phoneIdx);
+            ResultSet rs1 = checkPstmt.executeQuery();
 
             if (rs1.next() || !rs1.next()) {
                 String insertSql = "insert into sales(member_idx, phone_idx, sales_at)values (?, ?, current_timestamp()) ";
@@ -53,35 +53,59 @@ public class SalesDAO {
     // 2. 전체 기종에 중에 가장 많이 팔린 기종을 검색
     public List<PhoneDTO> getBestSellPhone(String searchPhone) throws SQLException {
 
+        Connection conn = null;
+
         List<PhoneDTO> salesList = new ArrayList<>();
         String sql = "select * \n" +
                 "from phone\n" +
                 "where sales_count > 0 and phone_name like ?\n" +
                 "order by sales_count desc ";
 
+        try {
+            conn = DataBaseUtil.getConnection();
+            conn.setAutoCommit(false);
 
-        try (Connection conn = DataBaseUtil.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, "%" + searchPhone + "%");
+            try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setString(1, "%" + searchPhone + "%");
 
 
-            ResultSet rs = pstmt.executeQuery();
-            while (rs.next()) {
-                PhoneDTO phoneDTO = new PhoneDTO();
-                phoneDTO.setPhoneId(rs.getInt("phone_idx"));
-                phoneDTO.setPhoneName(rs.getString("phone_name"));
-                phoneDTO.setPrice(rs.getInt("price"));
-                phoneDTO.setPhoneState(rs.getString("phone_state"));
-                phoneDTO.setQuantity(rs.getInt("quantity"));
-                phoneDTO.setSalesCount(rs.getInt("sales_count"));
-                salesList.add(phoneDTO);
+                ResultSet rs = pstmt.executeQuery();
+                while (rs.next()) {
+                    PhoneDTO phoneDTO = new PhoneDTO();
+                    phoneDTO.setPhoneId(rs.getInt("phone_idx"));
+                    phoneDTO.setPhoneName(rs.getString("phone_name"));
+                    phoneDTO.setPrice(rs.getInt("price"));
+                    phoneDTO.setPhoneState(rs.getString("phone_state"));
+                    phoneDTO.setQuantity(rs.getInt("quantity"));
+                    phoneDTO.setSalesCount(rs.getInt("sales_count"));
+                    salesList.add(phoneDTO);
+                }
+
+                for (PhoneDTO phone : salesList) {
+                    System.out.println(phone);
+                }
             }
 
-            for (PhoneDTO phone : salesList) {
-                System.out.println(phone);
+
+        } catch (Exception e) {
+            if (conn != null) {
+                try {
+                    conn.rollback();
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.setAutoCommit(true);
+                    conn.close();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+
             }
         }
-
         return salesList;
     }
 
@@ -101,27 +125,27 @@ public class SalesDAO {
 
             try (PreparedStatement checkPstmt = conn.prepareStatement(memberIdxSQl)) {
                 checkPstmt.setInt(1, useridx);
-                 ResultSet rs1 = checkPstmt.executeQuery();
-                 while(rs1.next()) {
-                     Integer id = rs1.getInt("phone_idx");
+                ResultSet rs1 = checkPstmt.executeQuery();
+                while (rs1.next()) {
+                    Integer id = rs1.getInt("phone_idx");
                     String searchSQL = "select * from phone where phone_idx = ?";
                     PreparedStatement pstmt = conn.prepareStatement(searchSQL);
-                     pstmt.setInt(1, id);
-                     ResultSet rs2 = pstmt.executeQuery();
-                     if(rs2.next()){
-                         int idx = rs2.getInt("phone_idx");
-                         String phoneName = rs2.getString("phone_name");
-                         LocalDateTime createdAt = rs2.getTimestamp("created_at").toLocalDateTime();
-                         int price = rs2.getInt("price");
-                         String phoneState = rs2.getString("phone_state");
-                         int quantity = rs2.getInt("quantity");
-                         int salesCount = rs2.getInt("sales_count");
-                         int memberId = rs2.getInt("member_idx");
+                    pstmt.setInt(1, id);
+                    ResultSet rs2 = pstmt.executeQuery();
+                    if (rs2.next()) {
+                        int idx = rs2.getInt("phone_idx");
+                        String phoneName = rs2.getString("phone_name");
+                        LocalDateTime createdAt = rs2.getTimestamp("created_at").toLocalDateTime();
+                        int price = rs2.getInt("price");
+                        String phoneState = rs2.getString("phone_state");
+                        int quantity = rs2.getInt("quantity");
+                        int salesCount = rs2.getInt("sales_count");
+                        int memberId = rs2.getInt("member_idx");
 
-                         PhoneDTO phoneDTO = new PhoneDTO(idx, phoneName, createdAt, price, phoneState, quantity, salesCount, memberId);
-                         phoneList.add(phoneDTO);
-                     }
-                 }
+                        PhoneDTO phoneDTO = new PhoneDTO(idx, phoneName, createdAt, price, phoneState, quantity, salesCount, memberId);
+                        phoneList.add(phoneDTO);
+                    }
+                }
 
             }
 
@@ -144,13 +168,9 @@ public class SalesDAO {
 
             }
         }
-
-
-
+        
         return phoneList;
     }
 
-    // 4. 기능추가
-    //
 
 }
