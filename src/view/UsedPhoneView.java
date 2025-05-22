@@ -442,12 +442,12 @@ public class UsedPhoneView extends JFrame implements ActionListener {
         buyPhonePanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         // 리스트 받아오기
-        List<MemberDTO> memberDTOS = null;
+        List<PhoneDTO> phoneDTOS = null;
         try {
-            memberDTOS = memberService.allMember();
+            phoneDTOS = salesService.buyPhoneList(userId);
 
-            for (MemberDTO student : memberDTOS) {
-                JLabel label = new JLabel(student.toString());
+            for (PhoneDTO phoneDTO : phoneDTOS) {
+                JLabel label = new JLabel(phoneDTO.toString());
                 label.setAlignmentX(Component.CENTER_ALIGNMENT); // 각 라벨 중앙 정렬
                 buyPhonePanel.add(label);
                 buyPhonePanel.add(Box.createVerticalStrut(10)); // 라벨 사이 여백
@@ -634,7 +634,7 @@ public class UsedPhoneView extends JFrame implements ActionListener {
     // 가장 많이 팔린 중고폰 검색 버튼 submit
     private void getBestPhoneSubmit() {
         if (phoneBestSalesInput.getText() == null || phoneBestSalesInput.getText().trim().isEmpty()) {
-            System.out.println("정확한 기종명 또는 공백을 입력하지 마세요!!");
+            System.out.println("정확한 기종명 입력 또는 공백을 입력하지 마세요!!");
         }
         try {
             Container container = getContentPane();
@@ -753,6 +753,7 @@ public class UsedPhoneView extends JFrame implements ActionListener {
         phoneBestSalesSubmitBtn.addActionListener(this);
         phoneAddSubmitBtn.addActionListener(this);
         phoneAddViewBtn.addActionListener(this);
+        buyPhoneListViewBtn.addActionListener(this);
         homeBtn.addActionListener(this);
     }
 
@@ -780,7 +781,6 @@ public class UsedPhoneView extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == homeBtn) {
             homeBtnApi();
-            System.out.println(userId);
         }
         if (e.getSource() == loginViewBtn) {
             RePaint();
