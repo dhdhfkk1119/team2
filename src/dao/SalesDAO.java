@@ -91,7 +91,7 @@ public class SalesDAO {
     // 다른사람이 산건 필요없음. 내가 산 내목록만 나오면됨.
     // 다중 조회가 될 수는 있음.
 
-    public List<PhoneDTO> buyPhoneList(int useridx)  {
+    public List<PhoneDTO> buyPhoneList(int useridx) {
         Connection conn = null;
         List<PhoneDTO> phoneList = new ArrayList<>();
         try {
@@ -116,8 +116,9 @@ public class SalesDAO {
                          String phoneState = rs2.getString("phone_state");
                          int quantity = rs2.getInt("quantity");
                          int salesCount = rs2.getInt("sales_count");
+                         int memberId = rs2.getInt("member_idx");
 
-                         PhoneDTO phoneDTO = new PhoneDTO(idx, phoneName, createdAt, price, phoneState, quantity, salesCount);
+                         PhoneDTO phoneDTO = new PhoneDTO(idx, phoneName, createdAt, price, phoneState, quantity, salesCount, memberId);
                          phoneList.add(phoneDTO);
                      }
                  }
@@ -148,5 +149,8 @@ public class SalesDAO {
 
         return phoneList;
     }
+
+    // 4. 기능추가
+    //
 
 }
