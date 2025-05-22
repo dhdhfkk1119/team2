@@ -44,7 +44,7 @@ public class MemberDAO {
 
     public List<MemberDTO> allMember() throws SQLException {
         List<MemberDTO> memberDTOS = new ArrayList<>();
-        String sql = "select * from member ";
+        String sql = "select member_idx,user_name,user_id,member_at from member ";
         try (Connection conn = DataBaseUtil.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             ResultSet rs = pstmt.executeQuery();
@@ -80,5 +80,15 @@ public class MemberDAO {
             }
         }
         return null;
+    }
+
+    public boolean isUserIdExists(String userId) throws SQLException {
+        String sql = "select 1 from member where user_id = ?";
+        try (Connection conn = DataBaseUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, userId);
+            ResultSet resultSet = pstmt.executeQuery();
+            return resultSet.next();
+        }
     }
 }//end of public class

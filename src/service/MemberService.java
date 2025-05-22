@@ -20,13 +20,7 @@ public class MemberService {
 
     // 중복 확인 하기
     public boolean isUserIdExists(String userId) throws SQLException {
-        String sql = "select 1 from member where user_id = ?";
-        try (Connection conn = DataBaseUtil.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, userId);
-            ResultSet resultSet = pstmt.executeQuery();
-            return resultSet.next();
-        }
+        return memberDAO.isUserIdExists(userId);
     }
 
     // 회원 목록 검색 하기 기능
