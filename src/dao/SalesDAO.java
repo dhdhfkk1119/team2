@@ -1,9 +1,8 @@
 package dao;
 
 import dto.PhoneDTO;
-import dto.SalesDTO;
 import lombok.Data;
-import until.DataBaseUtil;
+import utill.DataBaseUtil;
 
 import java.sql.*;
 import java.time.LocalDateTime;
