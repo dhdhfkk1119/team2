@@ -26,6 +26,7 @@ public class MemberDAO {
              PreparedStatement pstmt = conn.prepareStatement(checkSql)) {
             pstmt.setString(1, memberDTO.getUserId());
             ResultSet resultSet = pstmt.executeQuery();
+            //만약 위에서 반환한 resultSet의 값이 하나도 없으면 중복된 아이디가 없는 것 이므로 값을 넣고, 아니면 중복아이디라고 출력
             if(!resultSet.next()){
                 String insertSQL = "insert into member(user_name,user_id,password,member_at) values " +
                         "(?,?,?,current_date)";
