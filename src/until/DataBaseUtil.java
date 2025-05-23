@@ -6,6 +6,7 @@ import lombok.Setter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 @Getter
 @Setter
@@ -18,4 +19,6 @@ public class DataBaseUtil {
     public static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(DB_URL,DB_USER,DB_PWD);
     }
+
+
 }
