@@ -26,7 +26,7 @@ public class SalesDAO {
             checkPstmt.setInt(1, phoneIdx);
             ResultSet rs1 = checkPstmt.executeQuery();
 
-            if (rs1.next() || !rs1.next()) {
+            if (rs1.next()) {
                 String insertSql = "insert into sales(member_idx, phone_idx, sales_at)values (?, ?, current_timestamp()) ";
                 String updateSql = "update phone set quantity = quantity - 1, sales_count = sales_count + 1 where phone_idx = ? ";
 
