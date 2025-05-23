@@ -4,11 +4,10 @@ import lombok.*;
 
 import java.time.LocalDate;
 
-@Getter
-@Setter
+
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
 public class MemberDTO {
 
     private int memberIdx; // 자동으로 값이 증가

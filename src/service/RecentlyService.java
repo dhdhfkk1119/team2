@@ -1,4 +1,4 @@
-package view;
+package service;
 
 import dao.RecentlyDAO;
 import dto.PhoneDTO;
@@ -69,13 +69,9 @@ public class RecentlyService {
             System.out.println("최근 본 상품이 없습니다.");
         }
 
-//         3. 특정 기록 삭제 (옵션)
-//        System.out.println("\n️ viewed_idx = " + testViewedIdx + " 삭제 중...");
-//        recentlyService.deleteRecentlyViewed(testViewedIdx);
-//        System.out.println("삭제 완료.");
 
     }
-    }
+}
 
 
 

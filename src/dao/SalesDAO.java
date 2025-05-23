@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-
 public class SalesDAO {
 
     // 1. 판매하기 기능

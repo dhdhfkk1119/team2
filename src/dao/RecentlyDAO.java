@@ -2,7 +2,7 @@ package dao;
 
 import dto.PhoneDTO;
 import dto.RecentlyDTO;
-import until.DataBaseUtil;
+import utill.DataBaseUtil;
 
 import java.sql.*;
 import java.util.ArrayList;
