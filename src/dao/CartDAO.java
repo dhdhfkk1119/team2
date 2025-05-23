@@ -85,7 +85,6 @@ public class CartDAO {
     }
     //장바구니 수량 수정하기
 
-
     public void updateQuantity(int cartIdx, int newQuantity) throws SQLException {
         //사용할 쿼리문 먼저 생각
         String updateCart = "update cart set quantity = ? where cart_idx = ?";
