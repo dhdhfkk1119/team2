@@ -81,3 +81,12 @@ src/main/java
     * Git `main` 브랜치로 최종 병합.
 
 ---
+## 🎞️ 구현 영상
+
+### 회원 가입 및 로그인 하기 
+![](https://velog.velcdn.com/images/dhdhfkk1119/post/f276afb2-1cc0-4e28-82e4-37ae6264e218/image.gif)
+
+### 전체 상품 조회 및 상품 구매 및 상품 구매 목록
+![](https://velog.velcdn.com/images/dhdhfkk1119/post/bd37b9ab-9966-4a1e-b50e-f4acd4b62f76/image.gif)
+
+### 상품 등록하기 중고폰 검색 및 상품 판매 순위 조회 로그아웃![](https://velog.velcdn.com/images/dhdhfkk1119/post/09856b1b-3870-4fea-9f3e-41febdafdbbb/image.gif)
