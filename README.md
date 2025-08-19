@@ -1,12 +1,3 @@
-<img src="https://capsule-render.vercel.app/api?type=모양&color=색상코드&height=높이&section=header&text=텍스트&fontSize=텍스트크기" />
-출처: https://hulrud.tistory.com/3 [주독야독:티스토리]
-
-<img src="https://capsule-render.vercel.app/api?type=circle&color=색상코드&height=높이&section=footer&text=텍스트&fontSize=텍스트크기" />
-출처: https://hulrud.tistory.com/3 [주독야독:티스토리]
-
-
----
-
 # 휴대폰 중고거래 시스템
 
 이 프로젝트는 **Java Swing**을 활용하여 개발된 휴대폰중고 거래 사이트입니다. **MySQL 8** 데이터베이스와 연동하여 회원, 중고폰, 판매에 대한 기본적인 관리 기능을 제공하며, 사용자가 직관적으로 시스템을 조작할 수 있는 GUI 환경을 목표로 합니다.
